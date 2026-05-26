@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AGENCY SURVIVAL — THT Edition</title>
+    <meta name="description" content="Sobrevive al caos de una agencia tech en esta experiencia de capacitación gamer de Tehuentec. Domina la Sinergia y la Orientación a Resultados.">
+    
+    <!-- Google Fonts: Inter (Clean modern sans-serif) + Rubik (Rounded bold headings) + Press Start 2P, Share Tech Mono & Silkscreen -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&family=Rubik:wght@400;500;700;800;900&family=Share+Tech+Mono&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Ambient Particle Canvas for vaporwave background -->
+    <canvas id="ambient-particles"></canvas>
+
+    <!-- Scanline CRT retro monitor overlay -->
+    <div class="crt-overlay"></div>
+    <div class="crt-screen-reflection"></div>
+
+    <!-- Main Game Container simulating a GBA Memphis Window -->
+    <div id="game-container">
+        
+        <!-- OS/Browser Window Header Bar -->
+        <div class="window-header">
+            <div class="window-dots">
+                <span class="dot-circle red"></span>
+                <span class="dot-circle yellow"></span>
+                <span class="dot-circle green"></span>
+            </div>
+            <div class="window-title">AGENCY_SURVIVAL.EXE — THT CONTROL ROOM</div>
+            <div class="window-right-space"></div>
+        </div>
+
+        <!-- ================= HUD GLOBAL ================= -->
+        <header id="hud" class="hidden">
+            <div class="hud-item squad-badge">
+                <span class="hud-label">SQUAD</span>
+                <span id="hud-squad-val" class="hud-val">-</span>
+            </div>
+            <div class="hud-item score-container">
+                <span class="hud-label">SCORE</span>
+                <span id="hud-score-val" class="hud-val">0000</span>
+            </div>
+            <div class="hud-item progress-bars">
+                <!-- Pill Bar 1: Sinergia -->
+                <div class="bar-group">
+                    <div class="bar-badge">🔗</div>
+                    <div class="hud-bar-pill">
+                        <div id="bar-synergy" class="bar-fill fill-green" style="width: 80%;"></div>
+                        <span class="bar-text">SINERGIA</span>
+                    </div>
+                </div>
+                <!-- Pill Bar 2: Impacto -->
+                <div class="bar-group">
+                    <div class="bar-badge">⭐</div>
+                    <div class="hud-bar-pill">
+                        <div id="bar-results" class="bar-fill fill-green" style="width: 80%;"></div>
+                        <span class="bar-text">IMPACTO</span>
+                    </div>
+                </div>
+                <!-- Pill Bar 3: Cliente -->
+                <div class="bar-group">
+                    <div class="bar-badge">👍</div>
+                    <div class="hud-bar-pill">
+                        <div id="bar-client" class="bar-fill fill-green" style="width: 80%;"></div>
+                        <span class="bar-text">CLIENTE</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hud-item timer-combo">
+                <div class="hud-timer">
+                    <span class="hud-label">TIME</span>
+                    <span id="hud-timer-val" class="hud-val">90</span>
+                </div>
+                <div class="hud-combo">
+                    <span class="hud-label">COMBO</span>
+                    <span id="hud-combo-val" class="hud-val combo-violet">x1</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= PANTALLA 1: INTRO CINEMATOGRÁFICA ================= -->
+        <section id="screen-intro" class="game-screen active">
+            <div class="intro-box">
+                <div class="vaporwave-grid"></div>
+                <div class="logo-area">
+                    <div class="glitch-logo-container">
+                        <img src="componente-7.png" alt="Logo" class="glitch-logo">
+                    </div>
+                    <h1 class="glitch-title" data-text="AGENCY SURVIVAL">AGENCY SURVIVAL</h1>
+                    <h2 class="sub-title">THT EDITION</h2>
+                </div>
+                
+                <div class="sound-consent" style="margin-bottom: 25px;">
+                    <div class="sound-toggle-wrapper">
+                        <span>🔊 ¿ACTIVAR AUDIO?</span>
+                        <input type="checkbox" id="audio-toggle" checked>
+                        <label for="audio-toggle" class="custom-switch"></label>
+                    </div>
+                </div>
+
+
+                <div class="start-btn-container">
+                    <button id="btn-start-game" class="arcade-btn">
+                        <span class="btn-text">INICIAR OPERACIÓN</span>
+                        <span class="btn-shine"></span>
+                    </button>
+                </div>
+
+                <!-- loading state -->
+                <div id="intro-loading" class="hidden">
+                    <div class="pixel-loader-container">
+                        <div class="pixel-loader-bar"></div>
+                    </div>
+                    <span class="loading-text">SINCRONIZANDO TERMINAL DE SINERGIA...</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 2: SELECCIÓN DE EQUIPOS ================= -->
+        <section id="screen-squad-select" class="game-screen hidden">
+            <div class="screen-header">
+                <span class="pixel-tag">STAGE 01 / TEAM RECRUITMENT</span>
+                <h2 class="pixel-heading">ELEGÍ TU TEAM</h2>
+                <p class="screen-desc">Elegí el pilar que vas a defender en equipo.</p>
+            </div>
+
+            <div class="squad-grid" id="squad-options-container" style="display: flex; flex-direction: column; max-width: 720px; margin: 0 auto 12px auto; gap: 12px; width: 100%;">
+                <!-- Squad 1: Team 01 -->
+                <div class="squad-card Y2K-card" data-squad="Team1" style="display: flex; flex-direction: row; align-items: center; padding: 16px 20px; gap: 20px; min-height: auto; width: 100%; text-align: left; justify-content: flex-start; cursor: pointer;">
+                    <div class="squad-avatar color-green" style="width: 68px; height: 68px; margin-bottom: 0; box-shadow: 2px 2px 0px #000000; border-width: 2.5px; border-radius: 50%; overflow: hidden; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center; align-items: center;">
+                        <img src="comunicacion.png" alt="Comunicación" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="squad-info-wrapper" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; text-align: left;">
+                        <div class="squad-title-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <h3 style="font-family: 'Rubik', sans-serif; font-size: 16px; font-weight: 900; margin-bottom: 0; color: #ffffff; letter-spacing: 0.5px;">TEAM 01</h3>
+                            <span class="squad-sub" style="font-family: 'Share Tech Mono', monospace; font-size: 10px; margin-bottom: 0; color: var(--color-tht-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(13, 204, 103, 0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(13, 204, 103, 0.3);">Comunicación</span>
+                        </div>
+                        <p class="squad-desc" style="font-family: 'Inter', sans-serif; font-size: 13px; margin-bottom: 0; line-height: 1.45; color: var(--color-white); font-weight: 400;">Eliminamos la ambigüedad y el silencio. Compartimos información crítica porque el talento individual suma, pero el equipo alineado multiplica.</p>
+                    </div>
+                </div>
+
+                <!-- Squad 2: Team 02 -->
+                <div class="squad-card Y2K-card" data-squad="Team2" style="display: flex; flex-direction: row; align-items: center; padding: 16px 20px; gap: 20px; min-height: auto; width: 100%; text-align: left; justify-content: flex-start; cursor: pointer;">
+                    <div class="squad-avatar color-green" style="width: 68px; height: 68px; margin-bottom: 0; box-shadow: 2px 2px 0px #000000; border-width: 2.5px; border-radius: 50%; overflow: hidden; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center; align-items: center;">
+                        <img src="sinergia.png" alt="Sinergia" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="squad-info-wrapper" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; text-align: left;">
+                        <div class="squad-title-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <h3 style="font-family: 'Rubik', sans-serif; font-size: 16px; font-weight: 900; margin-bottom: 0; color: #ffffff; letter-spacing: 0.5px;">TEAM 02</h3>
+                            <span class="squad-sub" style="font-family: 'Share Tech Mono', monospace; font-size: 10px; margin-bottom: 0; color: var(--color-tht-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(13, 204, 103, 0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(13, 204, 103, 0.3);">Sinergia</span>
+                        </div>
+                        <p class="squad-desc" style="font-family: 'Inter', sans-serif; font-size: 13px; margin-bottom: 0; line-height: 1.45; color: var(--color-white); font-weight: 400;">Jugamos conectados. Integramos talentos para que el trabajo de uno mejore el resultado del otro.</p>
+                    </div>
+                </div>
+
+                <!-- Squad 3: Team 03 -->
+                <div class="squad-card Y2K-card" data-squad="Team3" style="display: flex; flex-direction: row; align-items: center; padding: 16px 20px; gap: 20px; min-height: auto; width: 100%; text-align: left; justify-content: flex-start; cursor: pointer;">
+                    <div class="squad-avatar color-green" style="width: 68px; height: 68px; margin-bottom: 0; box-shadow: 2px 2px 0px #000000; border-width: 2.5px; border-radius: 50%; overflow: hidden; background: #ffffff; flex-shrink: 0; display: flex; justify-content: center; align-items: center;">
+                        <img src="equipo_estrella.png" alt="Equipo Estrella" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                    <div class="squad-info-wrapper" style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; text-align: left;">
+                        <div class="squad-title-row" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <h3 style="font-family: 'Rubik', sans-serif; font-size: 16px; font-weight: 900; margin-bottom: 0; color: #ffffff; letter-spacing: 0.5px;">TEAM 03</h3>
+                            <span class="squad-sub" style="font-family: 'Share Tech Mono', monospace; font-size: 10px; margin-bottom: 0; color: var(--color-tht-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(13, 204, 103, 0.1); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(13, 204, 103, 0.3);">Equipo Estrella</span>
+                        </div>
+                        <p class="squad-desc" style="font-family: 'Inter', sans-serif; font-size: 13px; margin-bottom: 0; line-height: 1.45; color: var(--color-white); font-weight: 400;">No buscamos un grupo de estrellas que brillen solas; somos un equipo estrella que empuja hacia el mismo resultado.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-footer" style="display: flex; justify-content: flex-end; width: 100%;">
+                <button id="btn-confirm-squad" class="arcade-btn locked" disabled>
+                    <span class="btn-text">CONFIRMAR TEAM</span>
+                    <span class="btn-shine"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 3: SELECCIÓN DE NIVEL ================= -->
+        <section id="screen-level-select" class="game-screen hidden">
+            <div class="screen-header">
+                <span class="pixel-tag">STAGE 02 / MISSIONS LIST</span>
+                <h2 class="pixel-heading">MISIONES CRÍTICAS</h2>
+                <p class="screen-desc">La impecabilidad es la condición primera para que el sistema funcione. Superá estos 3 desafíos colectivos.</p>
+
+            <div class="level-map">
+                <!-- Level 1 Node -->
+                <div class="level-node Y2K-card active" id="level-node-1" data-level="1">
+                    <div class="level-number">01</div>
+                    <div class="level-info">
+                        <h3>FEEDBACK RUSH</h3>
+                        <span class="level-type">Coordinación en Tiempo Real</span>
+                    </div>
+                    <div class="level-status-tag">DISPONIBLE</div>
+                </div>
+
+                <!-- Level 2 Node -->
+                <div class="level-node Y2K-card locked" id="level-node-2" data-level="2">
+                    <div class="level-number">02</div>
+                    <div class="level-info">
+                        <h3>KPI CHAOS</h3>
+                        <span class="level-type">Matriz de Impacto THT</span>
+                    </div>
+                    <div class="level-status-tag">BLOQUEADO</div>
+                </div>
+
+                <!-- Level 3 Node -->
+                <div class="level-node Y2K-card locked" id="level-node-3" data-level="3">
+                    <div class="level-number">03</div>
+                    <div class="level-info">
+                        <h3>KPI CATCHER</h3>
+                        <span class="level-type">Arena de Foco en KPIs</span>
+                    </div>
+                    <div class="level-status-tag">BLOQUEADO</div>
+                </div>
+            </div>
+
+            <div class="action-footer" style="display: flex; justify-content: space-between; width: 100%;">
+                <button id="btn-back-squad" class="arcade-btn secondary">
+                    <span class="btn-text">ATRÁS</span>
+                </button>
+                <button id="btn-start-level" class="arcade-btn locked" disabled>
+                    <span class="btn-text">INICIAR DESAFÍO</span>
+                    <span class="btn-shine"></span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 4: GAMEPLAY CONTENEDOR ================= -->
+        <section id="screen-gameplay" class="game-screen hidden">
+            
+            <!-- CONTENEDOR INTERNO DE MINIJUEGOS -->
+            <div id="gameplay-arena">
+
+                <!-- INTRODUCTORIO DE NIVEL (POPUP INICIAL) -->
+                <div id="level-intro-overlay" class="overlay-modal">
+                    <div class="retro-box Y2K-card">
+                        <div class="level-tag-top">THT MISSION BRIEF</div>
+                        <h2 id="lvl-intro-title">NIVEL 1: FEEDBACK RUSH</h2>
+                        <div class="lvl-intro-body">
+                            <p id="lvl-intro-desc">El cliente ve el resultado de nuestra coordinación. Resolvé la crisis eliminando la ambigüedad y la fricción interna.</p>
+                            <div class="rules-box">
+                                <span class="rules-title">🔍 CÓMO JUGAR:</span>
+                                <ul id="lvl-intro-rules">
+                                    <li>Leé los dilemas y erradicá el silencio.</li>
+                                    <li>Elegí la opción que asegure una promesa impecable en menos de 90 segundos.</li>
+                                    <li>Los errores cortan la jugada. Synapse-Bot alertará tus desvíos a tiempo.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button id="btn-start-level-action" class="arcade-btn">
+                            <span class="btn-text">EMPEZAR OPERACIÓN</span>
+                            <span class="btn-shine"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RETRY / REINTENTAR SUPPORTIVE POPUP -->
+                <div id="level-retry-overlay" class="overlay-modal hidden">
+                    <div class="retro-box Y2K-card alert-card">
+                        <div class="level-tag-top">⚠️ ALINEACIÓN EN RIESGO</div>
+                        <h2>INTENTO FALLIDO</h2>
+                        <div class="lvl-intro-body">
+                            <p id="retry-critique-text">"El talento individual suma. El equipo alineado multiplica."</p>
+                            <p>Toda la operación sintió la desalineación o la falta de foco. Pero no te preocupes, ¡es parte del aprendizaje! Sigamos conectados.</p>
+                        </div>
+                        <button id="btn-retry-level-action" class="arcade-btn">
+                            <span class="btn-text">REINTENTAR SPRINT</span>
+                            <span class="btn-shine"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ================= MINIJUEGO 1: FEEDBACK RUSH (CLEAN CHAT DILEMMA) ================= -->
+                <div id="minigame-feedback-rush" class="minigame-container hidden">
+                    <div class="feedback-rush-layout">
+                        <!-- Columna Izquierda: El Chat Completo -->
+                        <div class="feedback-chat-column">
+                            <div class="feedback-chat-window Y2K-card">
+                                <div class="chat-user-header">
+                                    <div class="chat-header-left">
+                                        <span class="chat-channel-hash">#</span>
+                                        <div class="chat-user-info">
+                                            <span class="chat-channel-name" id="chat-channel-title">comunicación-en-acción</span>
+                                            <span class="chat-channel-purpose" id="chat-channel-desc">Monitoreo de desvíos y alineación de promesas</span>
+                                        </div>
+                                    </div>
+                                    <div class="chat-header-right">
+                                        <div class="chat-member-stack">
+                                            <span class="member-avatar avatar-mg">MG</span>
+                                            <span class="member-avatar avatar-ro">Ro</span>
+                                            <span class="member-avatar avatar-lu">Lu</span>
+                                            <span class="member-count">+3</span>
+                                        </div>
+                                        <div class="chat-search-mock">
+                                            <span>🔍 Buscar...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="chat-messages-scroll" id="chat-history-list">
+                                    <!-- Diálogos dinámicos cargados por script.js -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Columna Derecha: Cabecera, Pregunta y Tarjetas de Opción Verticales -->
+                        <div class="feedback-options-column">
+                            <div class="feedback-rush-header">
+                                <span class="lvl-number-tag">NIVEL 01</span>
+                                <h2 class="lvl-title-tag">FEEDBACK RUSH</h2>
+                            </div>
+
+                            <div class="decision-prompt-box Y2K-card">
+                                <div class="decision-prompt">¿QUÉ HACE EL EQUIPO?</div>
+                                
+                                <div class="decision-options-grid">
+                                    <button class="decision-option-card Y2K-card" id="btn-opt-A" data-option="A">
+                                        <span class="option-letter">A</span>
+                                        <span class="option-text">Opción A</span>
+                                    </button>
+                                    <button class="decision-option-card Y2K-card" id="btn-opt-B" data-option="B">
+                                        <span class="option-letter">B</span>
+                                        <span class="option-text">Opción B</span>
+                                    </button>
+                                    <button class="decision-option-card Y2K-card" id="btn-opt-C" data-option="C">
+                                        <span class="option-letter">C</span>
+                                        <span class="option-text">Opción C</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= MINIJUEGO 2: KPI CHAOS (DRAG & DROP) ================= -->
+                <div id="minigame-crisis-priority" class="minigame-container hidden">
+                    <div class="kpi-chaos-layout">
+                        <!-- Heading Info matching the screenshot -->
+                        <div class="kpi-chaos-header">
+                            <p class="lvl-desc-tag" id="lvl2-desc-tag" style="color: #ffffff; font-size: 16px; font-weight: 700; margin-bottom: 8px;">Arrastra a IMPACTO solo las tareas que mueven el objetivo real.</p>
+                            <div class="lvl-meta-tag-red" id="lvl2-meta-tag">META: +25% LEADS CALIFICADOS ESTE MES</div>
+                        </div>
+
+                        <!-- Drag and drop columns -->
+                        <div class="drag-drop-arena kpi-chaos-arena">
+                            <!-- Left Column: Available tasks -->
+                            <div class="drag-column Y2K-card" id="col-available-tasks">
+                                <div class="column-header">📋 TAREAS DISPONIBLES</div>
+                                <div id="drag-source-list" class="cards-list dropzone">
+                                    <!-- Cards loaded dynamically -->
+                                </div>
+                            </div>
+
+                            <!-- Right Column: Impact zone dropzone -->
+                            <div class="drop-column Y2K-card" id="col-impact-zone">
+                                <div class="column-header">⚡ ZONA DE IMPACTO</div>
+                                <div id="drop-target-list" class="cards-list dropzone">
+                                    <!-- Cards dragged here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confirmation button -->
+                        <div class="kpi-chaos-footer">
+                            <button id="btn-validate-kpi-chaos" class="arcade-btn">
+                                <span class="btn-text">CONFIRMAR ESTRATEGIA</span>
+                                <span class="btn-shine"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= MINIJUEGO 3: KPI CATCHER (CANVAS INTERACTIVE) ================= -->
+                <div id="minigame-kpi-catcher" class="minigame-container hidden">
+                    <div class="canvas-wrapper">
+                        <canvas id="kpi-catcher-canvas"></canvas>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= PANTALLA 5: PANTALLA DE RESULTADOS / CONGRATS ================= -->
+        <section id="screen-results" class="game-screen hidden">
+            <div class="results-grid-layout" id="results-panel-box">
+                <!-- Header -->
+                <div class="results-header">
+                    <h1 class="results-heading-epic">MISIÓN COMPLETADA</h1>
+                    <div class="results-progress-bar-container">
+                        <div class="results-progress-bar-fill"></div>
+                    </div>
+                    <span class="results-progress-text">OPERACIÓN AL 100%</span>
+                </div>
+
+                <!-- Left Column: Score Card -->
+                <div class="results-score-card">
+                    <div class="results-avatar-container">
+                        <img id="results-avatar-img" src="" alt="Team Avatar" />
+                    </div>
+                    <div class="results-total-score" id="results-score">0</div>
+                    <div class="results-score-label">PERFORMANCE SCORE</div>
+                </div>
+
+                <!-- Right Column: Metrics Grid & Text -->
+                <div class="results-details-column">
+                    <div class="results-metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-label">SINERGIA</span>
+                                <span class="metric-value" id="results-synergy">0/100</span>
+                            </div>
+                            <div class="metric-bar-bg"><div class="metric-bar-fill" id="results-bar-synergy"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-label">IMPACTO</span>
+                                <span class="metric-value" id="results-results">0/100</span>
+                            </div>
+                            <div class="metric-bar-bg"><div class="metric-bar-fill" id="results-bar-results"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-label">SATISFACCIÓN</span>
+                                <span class="metric-value" id="results-client">0/100</span>
+                            </div>
+                            <div class="metric-bar-bg"><div class="metric-bar-fill" id="results-bar-client"></div></div>
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <span class="metric-label">PROMESAS</span>
+                                <span class="metric-value" id="results-decisions">0/0</span>
+                            </div>
+                            <div class="metric-bar-bg"><div class="metric-bar-fill" id="results-bar-decisions"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="results-paragraph-box">
+                        <p id="results-critique-text">
+                            "<strong>La impecabilidad</strong> es la base de nuestro éxito. Tu visión sistémica demostró que el éxito real nace de la coordinación. Conectaste los pases del equipo con sinergia, eliminaste el ruido y aseguraste que cada acción mueva la aguja hacia el resultado colectivo. <strong class="neon-green">Gracias por ser parte del Star Team.</strong>"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ELEMENTO FLOTANTE: HELPER ROBOT 🤖 ================= -->
+        <div id="robot-helper" class="robot-hidden">
+            <div class="robot-bubble Y2K-card">
+                <span class="robot-close-btn" id="btn-close-robot">×</span>
+                <span class="robot-title">🤖 SYNAPSE-BOT</span>
+                <p id="robot-bubble-text">¿Sabías que una persona mejora el resultado de otra cuando comparte información a tiempo?</p>
+            </div>
+            <div class="robot-avatar-wrapper">
+                <div class="robot-avatar">🤖</div>
+                <div class="robot-antenna-glow"></div>
+            </div>
+        </div>
+
+    </div>
+
+
+    
+    <!-- Retro Sound Engine unlocked overlay for browsers -->
+    <div id="audio-unlock-overlay" class="hidden">
+        <div class="unlock-box Y2K-card">
+            <span class="alert-icon">⚡</span>
+            <h3>SISTEMA DE AUDIO DE AGENCIA</h3>
+            <p>Hacé click para sincronizar la consola de sonido Retro Arcade del juego.</p>
+            <button id="btn-unlock-audio" class="arcade-btn">SINCRONIZAR</button>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
