@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     const STATE = {
         score: 0,
-        timer: 90,
+        timer: 60,
         combo: 1,
         synergy: 80, // Stability (S)
         results: 80, // Impacto (I)
@@ -43,9 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 { sender: "MG", role: "Cliente", roleClass: "sender-role-client", avatar: "MG", avatarClass: "red-avatar", text: "🔴 Chicos, el Director entra a la reunión YA. Resuelvan y pásenme algo estructurado.", time: "11:53", isLeft: true, isUrgent: true }
             ],
             options: {
-                A: "Armar un reporte improvisado con datos estimados en silencio para cumplir con el tiempo, cruzando los dedos para que el Director no note los desvíos.",
-                B: "Seguir discutiendo en el chat para definir de quién fue la culpa por no avisar antes, dejando al cliente interno sin ninguna respuesta.",
-                C: "Levantar la mano con honestidad: Ro y Lu unifican rápido lo que tienen, MG presenta los datos reales validados y fijan un acuerdo claro con hora exacta para entregar el resto."
+                A: "Armar un estimado rápido. Completar lo que falta con números aproximados basados en el mes pasado para entregar a tiempo y no hacer esperar al Director.",
+                B: "Pedir unos minutos más. Explicar que el reporte está demorado porque pauta todavía está procesando los datos finales y enviarlo completo más tarde.",
+                C: "Entregar lo que hay y pactar el resto. Presentar ahora los datos reales que ya están listos y coordinar una hora exacta para entregar el bloque que falta."
             },
             feedbacks: {
                 A: "🔴 Armar reportes improvisados atenta contra la Impecabilidad. Ocultar desvíos destruye la confianza. ¡La honestidad es primera condición!",
@@ -64,9 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 { sender: "MG", role: "Cliente", roleClass: "sender-role-client", avatar: "MG", avatarClass: "red-avatar", text: "🔴 El cliente está viendo que los clics no convierten. Hay que arreglar esto ahora.", time: "16:13", isLeft: true, isUrgent: true }
             ],
             options: {
-                A: "Actuar como un sistema conectado: Lu revierte el cambio técnico en caliente para restablecer el formulario mientras Ro monitorea el flujo de clics, asegurando que el trabajo de una mejore el resultado de la otra.",
-                B: "Frenar absolutamente todas las campañas de forma masiva y armar una reunión de emergencia con todo el equipo para opinar sobre el diseño del formulario.",
-                C: "Que cada área defienda su tarea de forma aislada: Ro sigue corriendo pauta para cumplir su KPI y Lu revisa el código sola cuando termine sus otros pendientes."
+                A: "Volver atrás y revisar. Lu deshace el último cambio para que el formulario vuelva a funcionar ya mismo, mientras el equipo analiza qué rompió el código.",
+                B: "Esperar a la reunión de mañana. Dejar el formulario como está y armar una reunión con todo el equipo el próximo paso para decidir cómo rediseñarlo.",
+                C: "Seguir corriendo la campaña. Dejar los anuncios activos para cumplir con el objetivo de clics del día y ver si el error se arregla solo más tarde."
             },
             feedbacks: {
                 A: "¡Sinergia pura! Revertir el error técnico y monitorear el tráfico en tiempo real asegura que el trabajo de uno potencie el de la otra.",
@@ -85,9 +85,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 { sender: "MG", role: "Cliente", roleClass: "sender-role-client", avatar: "MG", avatarClass: "red-avatar", text: "🔴 El cliente está presionando mucho. Pide una acción concreta ahora.", time: "10:33", isLeft: true, isUrgent: true }
             ],
             options: {
-                A: "Publicar mecánicamente todo el contenido extra que pide el cliente para cerrar el ticket rápido y demostrar que cumplimos con la tarea solicitada.",
-                B: "Foco en mover la aguja: el equipo frena la urgencia vacía y le presenta al cliente una contrapropuesta basada en performance, demostrando cómo una acción coordinada generará el resultado real de negocio que busca.",
-                C: "Rechazar la petición del cliente de manera tajante argumentando que su estrategia está equivocada, sin proponer ninguna alternativa medible."
+                A: "Publicar el doble. Usar las plantillas listas para cumplir rápido con lo que pide el cliente y demostrarle que el equipo se mueve rápido.",
+                B: "Explicar y proponer otra solución. Mostrarle que más publicaciones no traerán más ventas y proponer mejorar los anuncios actuales para convencer a los usuarios.",
+                C: "Hacerle caso por unos días. Duplicar los posteos esta semana para dejar contento al cliente y recién después ver si funcionó o si perdimos el tiempo."
             },
             feedbacks: {
                 A: "🔴 Cumplir tareas vacías solo para 'cerrar el ticket' atenta contra la Orientación a Resultados. ¡No es hacer más, es mover la aguja!",
@@ -315,18 +315,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(450, this.ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(220, this.ctx.currentTime + 0.08);
+            osc.type = "square"; // Chiptune square wave
+            osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(300, this.ctx.currentTime + 0.05);
             
             gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-            gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+            gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
             
             osc.connect(gain);
             gain.connect(this.ctx.destination);
             
             osc.start();
-            osc.stop(this.ctx.currentTime + 0.08);
+            osc.stop(this.ctx.currentTime + 0.05);
         }
 
         playCorrect() {
@@ -334,21 +334,23 @@ document.addEventListener("DOMContentLoaded", () => {
             this.init();
             const now = this.ctx.currentTime;
             
-            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+            // Classic arcade "coin" or "1-up" arpeggio (rapid square waves)
+            const freqs = [659.25, 880, 1046.50, 1318.51];
+            freqs.forEach((freq, idx) => {
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 
-                osc.type = "sine";
-                osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+                osc.type = "square";
+                osc.frequency.setValueAtTime(freq, now + idx * 0.04);
                 
-                gain.gain.setValueAtTime(0.05, now + idx * 0.05);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.12);
+                gain.gain.setValueAtTime(0.04, now + idx * 0.04);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.04 + 0.1);
                 
                 osc.connect(gain);
                 gain.connect(this.ctx.destination);
                 
-                osc.start(now + idx * 0.05);
-                osc.stop(now + idx * 0.05 + 0.12);
+                osc.start(now + idx * 0.04);
+                osc.stop(now + idx * 0.04 + 0.1);
             });
         }
 
@@ -359,18 +361,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             
-            osc.type = "triangle";
-            osc.frequency.setValueAtTime(150, now);
-            osc.frequency.linearRampToValueAtTime(50, now + 0.2);
+            // Harsh retro error buzz (sawtooth dropping fast)
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.3);
             
             gain.gain.setValueAtTime(0.08, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
             
             osc.connect(gain);
             gain.connect(this.ctx.destination);
             
             osc.start();
-            osc.stop(now + 0.2);
+            osc.stop(now + 0.3);
         }
 
         playCatch() {
@@ -380,9 +383,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(800, now);
-            osc.frequency.setValueAtTime(1200, now + 0.06);
+            // Powerup bubble sound (fast upward sweep)
+            osc.type = "square";
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
             
             gain.gain.setValueAtTime(0.05, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
@@ -402,18 +406,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(987.77, now);
-            osc.frequency.exponentialRampToValueAtTime(1479.98, now + 0.1);
+            // Bright combo up sound
+            osc.type = "square";
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.exponentialRampToValueAtTime(1760, now + 0.08);
             
-            gain.gain.setValueAtTime(0.03, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            gain.gain.setValueAtTime(0.04, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
             
             osc.connect(gain);
             gain.connect(this.ctx.destination);
             
             osc.start();
-            osc.stop(now + 0.1);
+            osc.stop(now + 0.08);
         }
 
         playVictoryFanfare() {
@@ -432,7 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 osc.frequency.setValueAtTime(freq, now + (idx * 0.12));
                 
                 gain.gain.setValueAtTime(0, now);
-                gain.gain.setValueAtTime(0.04, now + (idx * 0.12));
+                gain.gain.setValueAtTime(0.05, now + (idx * 0.12));
                 gain.gain.exponentialRampToValueAtTime(0.001, now + (idx * 0.12) + 0.4);
                 
                 osc.connect(gain);
@@ -449,17 +454,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             
+            // Classic alternating arcade alarm (like a UFO or time low)
             osc.type = "square";
-            osc.frequency.setValueAtTime(880, this.ctx.currentTime);
+            osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+            osc.frequency.setValueAtTime(1200, this.ctx.currentTime + 0.05);
             
-            gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
             
             osc.connect(gain);
             gain.connect(this.ctx.destination);
             
             osc.start();
-            osc.stop(this.ctx.currentTime + 0.1);
+            osc.stop(this.ctx.currentTime + 0.15);
         }
     }
 
@@ -779,7 +786,7 @@ document.addEventListener("DOMContentLoaded", () => {
             desc: "El cliente ve el resultado de nuestra coordinación. Resolvé la crisis eliminando la ambigüedad y la fricción interna.",
             rules: [
                 "Leé los dilemas y erradicá el silencio.",
-                "Elegí la opción que asegure una promesa impecable en menos de 40 segundos.",
+                "Elegí la opción que asegure una promesa impecable en menos de 60 segundos.",
                 "Los errores cortan la jugada. Synapse-Bot alertará tus desvíos a tiempo."
             ]
         },
@@ -788,7 +795,7 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "NIVEL 2: KPI CHAOS",
             desc: "Priorización de impacto en negocio. Aprendé a separar el esfuerzo diario del ruido operativo para dirigir la energía hacia el valor medible.",
             rules: [
-                "Arrastrá a la ZONA DE IMPACTO las acciones que verdaderamente mueven la aguja.",
+                "Tenés 60 segundos para arrastrar a la ZONA DE IMPACTO las acciones que verdaderamente mueven la aguja.",
                 "Mantené el foco estratégico para alcanzar la META.",
                 "Dejá a la izquierda las tareas sin propósito claro que debilitan el resultado del sistema."
             ]
@@ -798,7 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
             title: "NIVEL 3: KPI CATCHER",
             desc: "Foco extremo en performance. Capturá los resultados reales que mueven la aguja y esquivá las falsas urgencias que consumen la energía del sistema.",
             rules: [
-                "Atrapá los impactos reales antes de que toquen el suelo.",
+                "Tenés 60 segundos para atrapar los impactos reales antes de que toquen el suelo.",
                 "Esquivá el ruido operativo y las tareas sin propósito.",
                 "Cada acierto multiplica tu performance. El retrabajo destruye tus métricas."
             ]
@@ -837,7 +844,7 @@ document.addEventListener("DOMContentLoaded", () => {
         STATE.levelActive = true;
         STATE.collapsed = false;
         
-        STATE.timer = 40;
+        STATE.timer = 60;
         
         updateHUD();
         
