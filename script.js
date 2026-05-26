@@ -444,8 +444,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         playAlarm() {
-            // Quiet warning: Muted as requested to keep the retro gameplay clean and focus-oriented
-            return;
+            if (!STATE.soundEnabled) return;
+            this.init();
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            
+            osc.type = "square";
+            osc.frequency.setValueAtTime(880, this.ctx.currentTime);
+            
+            gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+            
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.1);
         }
     }
 
@@ -845,8 +859,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 STATE.timer--;
                 
                 if (STATE.timer <= 10 && STATE.timer > 0) {
-                    AUDIO.playAlarm();
                     HUD.timer.classList.add("neon-pulse");
+                    if (STATE.timer <= 5) {
+                        AUDIO.playAlarm();
+                    }
                 } else {
                     HUD.timer.classList.remove("neon-pulse");
                 }

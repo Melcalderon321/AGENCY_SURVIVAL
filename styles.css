@@ -2211,3 +2211,22 @@ body {
         font-size: 18px;
     }
 }
+
+/* ==========================================================================
+   GAMER POLISH: CRITICAL TIMER HEARTBEAT
+   ========================================================================== */
+.neon-pulse {
+    color: var(--color-tht-orange) !important;
+    animation: heartbeat 0.8s infinite alternate cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes heartbeat {
+    0% {
+        transform: scale(1);
+        text-shadow: 0 0 5px var(--color-tht-orange);
+    }
+    100% {
+        transform: scale(1.15);
+        text-shadow: 0 0 20px var(--color-tht-orange), 0 0 30px var(--color-tht-orange);
+    }
+}
