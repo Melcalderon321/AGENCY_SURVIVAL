@@ -46,14 +46,13 @@ body {
     color: var(--color-white);
     font-family: var(--font-ui);
     font-weight: 500;
-    overflow-x: hidden;
-    overflow-y: auto;
-    min-height: 100vh;
+    overflow: hidden;
+    height: 100vh;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px 0;
+    padding: 10px;
     position: relative;
 }
 
@@ -68,7 +67,7 @@ body {
     pointer-events: none;
 }
 
-/* --- Soft scanlines for retro texture --- */
+/* --- Soft scanlines for retro texture (static, very subtle) --- */
 .crt-overlay {
     position: absolute;
     top: 0;
@@ -76,30 +75,18 @@ body {
     width: 100%;
     height: 100%;
     background: linear-gradient(
-        rgba(255, 255, 255, 0.02) 50%, 
-        rgba(0, 0, 0, 0.15) 50%
+        rgba(255, 255, 255, 0.01) 50%, 
+        rgba(0, 0, 0, 0.06) 50%
     );
     background-size: 100% 4px;
     z-index: 9999;
     pointer-events: none;
-    opacity: 0.7;
+    opacity: 0.25;
 }
 
 .crt-overlay::before {
-    content: " ";
-    display: block;
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0));
-    background-size: 100% 8px;
-    animation: crt-scanline 8s linear infinite;
-    z-index: 3;
-    pointer-events: none;
-}
-
-@keyframes crt-scanline {
-    0% { transform: translateY(-100vh); }
-    100% { transform: translateY(100vh); }
+    content: "";
+    display: none;
 }
 
 .crt-screen-reflection {
@@ -114,10 +101,8 @@ body {
 #game-container {
     position: relative;
     width: 95vw;
-    height: 92vh;
-    min-height: 760px;
+    height: calc(100vh - 20px);
     max-width: 1200px;
-    max-height: 900px;
     background-color: var(--color-ui-grey);
     border: 3.5px solid #000000;
     box-shadow: var(--flat-shadow-large), inset 0 0 100px rgba(0,0,0,0.6);
@@ -141,27 +126,19 @@ body {
     40%, 60% { transform: translate3d(5px, 0, 0); }
 }
 
-/* --- Flat Vaporwave Grid background --- */
+/* --- Flat Vaporwave Grid background (static, subtle) --- */
 .vaporwave-grid {
     position: absolute;
-    width: 200%;
+    width: 100%;
     height: 100%;
     top: 0;
-    left: -50%;
+    left: 0;
     background-image: 
-        linear-gradient(rgba(13, 204, 103, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(13, 204, 103, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
-    transform: perspective(250px) rotateX(60deg) translateY(-100px);
-    transform-origin: top center;
-    animation: grid-scroll 24s linear infinite;
+        linear-gradient(rgba(13, 204, 103, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(13, 204, 103, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
     z-index: 0;
     pointer-events: none;
-}
-
-@keyframes grid-scroll {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 1000px; }
 }
 
 /* --- OS Window header bar --- */
@@ -378,11 +355,19 @@ body {
 /* --- SCREENS TRANSITIONS --- */
 .game-screen {
     position: relative;
-    flex-grow: 1;
+    flex: 1 1 0;
     display: flex;
     flex-direction: column;
-    padding: 20px;
+    padding: 14px 20px;
     z-index: 10;
+    overflow: hidden;
+    min-height: 0;
+}
+
+.action-footer {
+    flex-shrink: 0;
+    padding-top: 8px;
+    margin-top: auto;
 }
 
 .hidden {
@@ -652,10 +637,11 @@ body {
 
 /* --- 2. SQUAD SELECT SCREEN --- */
 .screen-header {
-    margin-bottom: 45px !important;
+    margin-bottom: 10px !important;
     border-left: 6px solid var(--color-tht-green);
     padding-left: 15px;
     z-index: 10;
+    flex-shrink: 0;
 }
 
 .pixel-tag {
@@ -665,30 +651,31 @@ body {
     color: var(--color-tht-green);
     letter-spacing: 1px;
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
 }
 
 .pixel-heading {
     font-family: var(--font-heading);
-    font-size: 38px;
+    font-size: 28px;
     letter-spacing: 0.5px;
     color: #ffffff;
-    margin-bottom: 8px !important;
+    margin-bottom: 4px !important;
 }
 
 .screen-desc {
-    font-size: 13px;
+    font-size: 12px;
     color: var(--color-muted);
-    line-height: 1.45;
-    margin-bottom: 24px !important;
+    line-height: 1.4;
+    margin-bottom: 0px !important;
 }
 
 .squad-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 12px;
-    flex-grow: 1;
-    margin-bottom: 20px;
+    gap: 8px;
+    flex: 1 1 0;
+    min-height: 0;
+    margin-bottom: 8px;
     z-index: 10;
 }
 .squad-card {
@@ -765,9 +752,10 @@ body {
 .level-map {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
-    flex-grow: 1;
+    gap: 10px;
+    margin-bottom: 10px;
+    flex: 1 1 0;
+    min-height: 0;
     z-index: 10;
 }
 
@@ -775,7 +763,7 @@ body {
     display: flex;
     align-items: center;
     cursor: pointer;
-    padding: 16px 24px;
+    padding: 12px 20px;
     border: 3.5px solid #000000;
     border-radius: 8px;
     box-shadow: var(--flat-shadow);
